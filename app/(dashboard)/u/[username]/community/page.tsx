@@ -3,10 +3,26 @@ import { columns } from "@/modules/dashboard/components/column";
 import { DataTable } from "@/modules/dashboard/components/data-table";
 import { format } from "date-fns";
 
+type BlockedUser = {
+  blocked: {
+    id: string;
+    username: string;
+    imageUrl: string;
+    clerkId: string;
+    bio: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+  };
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  blockerId: string;
+  blockedId: string;
+};
+
 const CommunityPage = async () => {
     const blockedUser = await getBockedUser();
-    console.log(blockedUser);
-    const formattedData = blockedUser.map((block) => ({
+    const formattedData = blockedUser.map((block: BlockedUser) => ({
         ...block,
         userId: block.blocked.id,
         imageUrl: block.blocked.imageUrl,
