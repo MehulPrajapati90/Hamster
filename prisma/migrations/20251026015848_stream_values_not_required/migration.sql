@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Stream" ALTER COLUMN "thumbnailUrl" DROP NOT NULL,
+ALTER COLUMN "ingress" DROP NOT NULL,
+ALTER COLUMN "serverUrl" DROP NOT NULL,
+ALTER COLUMN "streamKey" DROP NOT NULL;
