@@ -7,14 +7,14 @@ interface SearchPageProps {
 }
 
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-    const {term} = await searchParams;
+    const { term } = await searchParams;
 
     if (!term) {
         redirect("/");
     }
 
     return (
-        <div className="h-full p-8 max-w-screen-2xl mx-auto">
+        <div className="h-full p-8 w-screen-2xl mx-auto">
             <Suspense fallback={<SearchResultsSkeleton />}>
                 <SearchResults term={term} />
             </Suspense>

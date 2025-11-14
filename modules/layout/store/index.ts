@@ -6,8 +6,18 @@ interface SidebarStore {
     onCollapse: () => void;
 }
 
+interface MobileSettingsStore {
+    isSettings: boolean;
+    setIsSettings: () => void;
+}
+
 export const useSidebarStore = create<SidebarStore>()((set) => ({
     collapsed: false,
     onExpand: () => set(() => ({ collapsed: false })),
     onCollapse: () => set(() => ({ collapsed: true }))
+}))
+
+export const useMobileSettings = create<MobileSettingsStore>()((set) => ({
+    isSettings: false,
+    setIsSettings: () => set((state) => ({ isSettings: !state.isSettings }))
 }))

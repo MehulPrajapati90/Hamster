@@ -49,7 +49,7 @@ export const ResultCardSkeleton = () => {
     return (
         <div className="h-full w-full">
             <ThumbnailSkeleton />
-            <div className="flex gap-x-3">
+            <div className="flex gap-x-3 py-2">
                 <UserAvatarSkeleton />
                 <div className="flex flex-col gap-y-1">
                     <Skeleton className="h-4 w-32" />

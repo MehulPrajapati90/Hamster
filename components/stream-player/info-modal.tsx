@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 import Hint from "../ui/hint";
 import { Trash } from "lucide-react";
 import Image from "next/image";
+import { useUpdateStream } from "@/modules/dashboard/hooks/dashboard";
 
 interface InfoModalProps {
   initialName: string;
@@ -20,15 +21,16 @@ interface InfoModalProps {
 
 const InfoModal = ({ initialName, initialThumbnailUrl }: InfoModalProps) => {
   const router = useRouter();
+  const { mutateAsync, data, isPending } = useUpdateStream();
   const closeRef = useRef<ElementRef<"button">>(null);
   const [thumbnail, setThumbnail] = useState(initialThumbnailUrl);
-  const [isPending, startTransition] = useTransition();
+  const [isTransitionPending, startTransition] = useTransition();
   const [name, setName] = useState<string>(initialName);
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     startTransition(() => {
-      updateStream({ name: name })
+      mutateAsync({ name: name })
         .then(() => {
           toast.success("Stream updated!");
           closeRef?.current?.click();
@@ -37,7 +39,6 @@ const InfoModal = ({ initialName, initialThumbnailUrl }: InfoModalProps) => {
           toast.error("Something went wrong");
         })
     });
-    closeRef?.current?.click();
   }
 
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -46,15 +47,14 @@ const InfoModal = ({ initialName, initialThumbnailUrl }: InfoModalProps) => {
 
   const onRemove = () => {
     startTransition(() => {
-      updateStream({ thumbnailUrl: null })
+      mutateAsync({ thumbnailUrl: null })
         .then(() => {
           setThumbnail("");
           toast.success("Thumbnail removed")
+          closeRef?.current?.click();
         })
         .catch(() => (toast.error("Something went wrong")))
     })
-
-    closeRef.current?.click();
   }
 
   return (

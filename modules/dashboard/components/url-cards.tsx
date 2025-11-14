@@ -9,9 +9,9 @@ interface UrlCardsProps {
 
 const UrlCards = ({ value }: UrlCardsProps) => {
     return (
-        <div className="rounded-xl bg-muted p-6">
-            <div className="flex items-center gap-x-10">
-                <p className="font-semibold shrink-0">
+        <div className="rounded-xl p-6 bg-zinc-900 border">
+            <div className="flex items-center gap-x-5 md:gap-x-10">
+                <p className="font-semibold text-[13px] md:text-[16px] shrink-0">
                     Server URL
                 </p>
                 <div className="space-y-2 w-full">
@@ -20,6 +20,7 @@ const UrlCards = ({ value }: UrlCardsProps) => {
                             value={value}
                             disabled
                             placeholder="Server Url"
+                            className="text-[13px] md:text-[16px]"
                         />
 
                         <CopyButton

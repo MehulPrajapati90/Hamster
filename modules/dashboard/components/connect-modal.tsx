@@ -10,6 +10,7 @@ import { IngressInput } from "livekit-server-sdk";
 import { useState, useRef, useTransition, ElementRef } from "react";
 import { createIngress } from "@/actions/ingress";
 import { toast } from "sonner";
+import { useCreateIngress } from "../hooks/dashboard";
 
 const RTMP = String(IngressInput.RTMP_INPUT);
 const WHIP = String(IngressInput.WHIP_INPUT);
@@ -17,19 +18,19 @@ const WHIP = String(IngressInput.WHIP_INPUT);
 type IngressType = typeof RTMP | typeof WHIP;
 
 const ConnectModal = () => {
-    const [isPending, startTransition] = useTransition();
+    const [isTransitionPending, startTransition] = useTransition();
     const [ingressType, setIngressType] = useState<IngressType>(RTMP);
-
     const closeRef = useRef<ElementRef<"button">>(null);
+    const { mutateAsync, data, isPending } = useCreateIngress();
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         startTransition(() => {
-            createIngress(parseInt(ingressType))
+            mutateAsync(parseInt(ingressType))
                 .then(() => {
                     toast.success("Ingress Created");
-                    closeRef?.current?.click();
+                    closeRef.current?.click();
                 })
-                .catch(() => toast.error("Something went wrong"))
+                .catch(() => toast.error("Rate limit try after 10'sec"))
         });
     }
 

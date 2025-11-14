@@ -4,23 +4,24 @@ import React, { useRef, useState, useTransition, ElementRef } from "react";
 import { Button } from "../ui/button";
 import { Dialog, DialogClose, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Textarea } from "../ui/textarea";
-import { updateUser } from "@/modules/dashboard/actions";
 import { toast } from "sonner";
+import { useUpdateUser } from "@/modules/dashboard/hooks/dashboard";
 
 interface BioModelProps {
     initialValue: string
 }
 
 const BioModel = ({ initialValue }: BioModelProps) => {
+    const { mutateAsync, data, isPending } = useUpdateUser();
     const [value, setvalue] = useState(initialValue || '');
-    const [isPending, startTransition] = useTransition();
+    const [isTransitionPending, startTransition] = useTransition();
     const CloseRef = useRef<ElementRef<"button">>(null)
 
     const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         startTransition(() => {
-            updateUser({ bio: value })
+            mutateAsync({ bio: value })
                 .then(() => {
                     toast.success("Details updated successfully")
                     CloseRef.current?.click();

@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import QueryProvider from "@/components/query-client";
 import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "sonner";
+import { dark,  } from '@clerk/themes'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -31,7 +32,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClerkProvider>
+        <ClerkProvider appearance={{
+          theme: [dark]
+        }}>
           <QueryProvider>
             <ThemeProvider
               attribute="class"

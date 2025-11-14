@@ -53,7 +53,7 @@ const Actions = ({ hostIdentity, isFollowing, isHost }: ActiosnProps) => {
     }
 
     return (
-        <Button disabled={isPending || isHost} onClick={toggleFollow} variant={"primary"} size={"sm"} className="w-full lg:w-auto">
+        <Button disabled={isPending || isHost} onClick={toggleFollow} variant={"primary"} size={"sm"} className="w-full md:w-auto">
             <Heart className={cn("h-4 w-4", isFollowing ? "fill-white" : "fill-none")} />
             {isFollowing ? "Unfollow" : "follow"}
         </Button>

@@ -64,9 +64,9 @@ export const updateStream = async (values: Partial<Stream>) => {
             }
         })
 
-        revalidatePath(`/u/${self.user?.username}/chat`);
-        revalidatePath(`/u/${self.user?.username}`);
-        revalidatePath(`/${self.user?.username}`);
+        // revalidatePath(`/u/${self.user?.username}/chat`);
+        // revalidatePath(`/u/${self.user?.username}`);
+        // revalidatePath(`/${self.user?.username}`);
 
         return stream;
     } catch {
@@ -92,8 +92,8 @@ export const updateUser = async (values: Partial<User>) => {
             }
         })
 
-        revalidatePath(`/${user?.username}`);
-        revalidatePath(`/u/${user?.username}`);
+        // revalidatePath(`/${user?.username}`);
+        // revalidatePath(`/u/${user?.username}`);
 
         return user;
     } catch (e) {
@@ -119,3 +119,16 @@ export const getBockedUser = async () => {
         throw new Error("Issue fetching");
     }
 };
+
+export const getStreamOfUser = async () => {
+    const { user } = await currentDbUser();
+    const stream = await client.stream.findUnique({
+        where: { userId: user?.id }
+    });
+
+    if (user?.username) {
+        revalidatePath(`/u/${user?.username}`);
+    }
+
+    return stream;
+}
