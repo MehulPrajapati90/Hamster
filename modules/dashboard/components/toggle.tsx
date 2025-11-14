@@ -3,7 +3,7 @@
 import { useDashboardStore } from '../store'
 import Hint from '@/components/ui/hint';
 import { Button } from '@/components/ui/button';
-import { ArrowLeftFromLine, ArrowRightFromLine } from 'lucide-react';
+import { PanelLeft, PanelRight } from 'lucide-react';
 
 const Toggle = () => {
     const { collapsed, onCollapse, onExpand } = useDashboardStore();
@@ -14,7 +14,7 @@ const Toggle = () => {
                 <div className='w-full hidden lg:flex items-center justify-center pt-4 mb-4'>
                     <Hint asChild label={label} side='right'>
                         <Button className='h-auto p-2' onClick={onExpand} variant={"ghost"}>
-                            <ArrowRightFromLine className='h-4 w-4' />
+                            <PanelRight className='h-4 w-4' />
                         </Button>
                     </Hint>
                 </div>
@@ -27,7 +27,7 @@ const Toggle = () => {
                     </p>
                     <Hint label={label} side='right' asChild>
                         <Button onClick={onCollapse} variant={"ghost"} className='h-auto p-2 ml-auto'>
-                            <ArrowLeftFromLine className='h-4 w-4' />
+                            <PanelLeft className='h-4 w-4' />
                         </Button>
                     </Hint>
                 </div>

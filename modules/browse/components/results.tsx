@@ -6,7 +6,7 @@ const BrowseResults = async () => {
     const data = await getStreams();
     console.log(data);
     return (
-        <div>
+        <div className='text-white'>
             <h2 className='text-lg font-semibold mb-4'>
                 Stream we think you&apos;ll like
             </h2>

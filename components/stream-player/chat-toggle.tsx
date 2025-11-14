@@ -1,14 +1,14 @@
 "use client";
 
 import { useChatSidebarStore } from "@/modules/dashboard/store";
-import { ArrowLeftFromLine, ArrowRightFromLine } from "lucide-react";
+import { PanelLeft, PanelRight } from "lucide-react";
 import Hint from "../ui/hint";
 import { Button } from "../ui/button";
 
 const ChatToggle = () => {
     const { collapsed, onExpand, onCollapse } = useChatSidebarStore();
 
-    const Icon = collapsed ? ArrowLeftFromLine : ArrowRightFromLine;
+    const Icon = collapsed ? PanelLeft : PanelRight;
 
     const onToggle = () => {
         if (collapsed) {

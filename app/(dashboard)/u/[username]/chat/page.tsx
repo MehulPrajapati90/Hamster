@@ -1,15 +1,17 @@
+"use client";
+
 import { currentDbUser } from '@/modules/auth/actions';
 import { getStreamByUserId } from '@/modules/dashboard/actions';
 import ToggleCard from '@/modules/dashboard/components/toggle-cards';
+import { useGetStreamByUserId } from '@/modules/dashboard/hooks/dashboard';
 
-const ChatPage = async () => {
-    const self = await currentDbUser();
-    const stream = await getStreamByUserId(self?.user?.id || '');
+const ChatPage = () => {
+    const { data: stream, isPending: isStreamLoading } = useGetStreamByUserId();
 
-    if (!stream) {
-        throw new Error("Stream not found!");
-    }
+    if (isStreamLoading) return <div>Loading...</div>;
 
+    if (!stream) return <div>No stream found!</div>;
+    
     return (
         <div className='p-6'>
             <div className='mb-4'>

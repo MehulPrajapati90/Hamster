@@ -23,7 +23,7 @@ const UserItem = ({ imageUrl, username, isLive }: UserItemProps) => {
     const href = `/${username}`;
     const isActive = pathname === href;
     return (
-        <Button asChild variant={"ghost"} className={cn("w-full h-12", collapsed ? "justify-center" : "justify-start", isActive && "bg-accent")}>
+        <Button asChild className={cn("w-full h-12 bg-[#101114] border-b border-b-zinc-800 transition-all ease-in-out hover:bg-zinc-800 duration-200 text-white", collapsed ? "justify-center" : "justify-start", isActive && "bg-accent")}>
             <Link href={href}>
                 <div className={cn(
                     "flex items-center w-full gap-x-4", collapsed && "justify-center",

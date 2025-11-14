@@ -5,6 +5,7 @@ import { useTransition } from "react";
 import { updateStream } from "../actions";
 import { toast } from "sonner";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useUpdateStream } from "../hooks/dashboard";
 
 type FieldTypes = "isChatEnabled" | "isChatDelayed" | "isChatFollowersOnly"
 
@@ -15,24 +16,25 @@ interface ToggleCardProps {
 }
 
 const ToggleCard = ({ field, label, value }: ToggleCardProps) => {
-    const [ispending, startTransition] = useTransition();
+    const { mutateAsync, data, isPending } = useUpdateStream();
+    const [isTransitionPending, startTransition] = useTransition();
     const onChange = () => {
         startTransition(() => {
-            updateStream({ [field]: !value })
+            mutateAsync({ [field]: !value })
                 .then(() => toast.success("Chat Settings updated"))
                 .catch(() => toast.error("Something went wrong"))
         })
     }
 
     return (
-        <div className="rounded-xl bg-muted p-6">
+        <div className="rounded-xl bg-zinc-900 p-6">
             <div className="flex items-center justify-between">
-                <p className="font-semibold shrink-0">
+                <p className="font-semibold text-[14px] md:text-[18px] shrink-0">
                     {label}
                 </p>
 
                 <div className="space-y-2">
-                    <Switch checked={value} onCheckedChange={onChange} disabled={ispending}>
+                    <Switch checked={value} onCheckedChange={onChange} disabled={isPending}>
                         {value ? "On" : "Off"}
                     </Switch>
                 </div>

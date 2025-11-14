@@ -89,7 +89,7 @@ export const createIngress = async (ingressType: IngressInput) => {
         },
     });
 
-    revalidatePath(`/u/${self.user?.username}/keys`);
+    // revalidatePath(`/u/${self.user?.username}/keys`);
 
     return {
         ingressId: ingress.ingressId,

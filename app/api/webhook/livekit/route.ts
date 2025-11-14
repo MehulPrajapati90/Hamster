@@ -2,6 +2,7 @@ import { headers } from "next/headers";
 import { WebhookReceiver } from "livekit-server-sdk";
 import { client } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 
 const reciver = new WebhookReceiver(
     process.env.LIVEKIT_API_KEY!,

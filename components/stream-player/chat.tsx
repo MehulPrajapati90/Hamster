@@ -55,7 +55,7 @@ const Chat = ({ hostIdentity, hostName, isChatDelayed, isChatEnabled, isChatFoll
     }
 
     return (
-        <div className="flex flex-col bg-background border border-b pt-0 h-[calc(100vh-80px)]">
+        <div className="flex flex-col bg-transparent border border-b h-[calc(100vh-80px)] sticky right-0">
             <ChatHeader />
             {variant === ChatVariants.CHAT && (
                 <>
@@ -89,7 +89,7 @@ const Chat = ({ hostIdentity, hostName, isChatDelayed, isChatEnabled, isChatFoll
 
 export const ChatSkeleton = () => {
     return (
-        <div className="flx flex-col border-l border-b pt-0 h-[calc(100vh-80px)] border-2">
+        <div className="flex flex-col border-l border-b pt-0 h-[calc(100vh-80px)] border-2">
             <ChatHeaderSkeleton />
             <ChatListSkeleton />
             <ChatFormSkeleton />
