@@ -1,6 +1,6 @@
 "use client";
 
-import { useAuth } from "@clerk/nextjs";
+import { useAuth, useUser } from "@clerk/nextjs";
 import { Button } from "../ui/button";
 import { Heart } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -17,11 +17,10 @@ interface ActiosnProps {
 }
 
 const Actions = ({ hostIdentity, isFollowing, isHost }: ActiosnProps) => {
+    const user = useUser();
     const [isPending, startTransition] = useTransition();
     const { userId } = useAuth();
     const router = useRouter();
-
-    console.log(isHost)
 
     const handleFollow = () => {
         startTransition(() => {
@@ -53,10 +52,19 @@ const Actions = ({ hostIdentity, isFollowing, isHost }: ActiosnProps) => {
     }
 
     return (
-        <Button disabled={isPending || isHost} onClick={toggleFollow} variant={"primary"} size={"sm"} className="w-full md:w-auto">
-            <Heart className={cn("h-4 w-4", isFollowing ? "fill-white" : "fill-none")} />
-            {isFollowing ? "Unfollow" : "follow"}
-        </Button>
+        <>
+            {user?.isSignedIn ? (
+                <Button disabled={isPending || isHost} onClick={toggleFollow} variant={"primary"} size={"sm"} className="w-full md:w-auto">
+                    <Heart className={cn("h-4 w-4", isFollowing ? "fill-white" : "fill-none")} />
+                    {isFollowing ? "Unfollow" : "follow"}
+                </Button>
+            ) : (
+                <Button disabled={isPending || isHost} onClick={toggleFollow} variant={"primary"} size={"sm"} className="w-full md:w-auto">
+                    <Heart className={cn("h-4 w-4", "fill-none")} />
+                    {"follow"}
+                </Button>
+            )}
+        </>
     )
 }
 
