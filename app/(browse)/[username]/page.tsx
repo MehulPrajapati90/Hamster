@@ -1,6 +1,5 @@
 import StreamPlayer from "@/components/stream-player/video-player";
 import { getUserByUsername, isBlockedByUser, isFollowingUser } from "@/modules/browse/actions";
-import FollowActions from "@/modules/browse/components/user-actions";
 import { notFound } from "next/navigation";
 
 interface UserPageProps {
@@ -26,7 +25,7 @@ const UserPage = async ({ params }: UserPageProps) => {
     notFound();
   }
 
-  console.log(isFollowing, isBlockedUser)
+  // console.log(isFollowing, isBlockedUser)
 
   return (
     <StreamPlayer
