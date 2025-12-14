@@ -81,8 +81,8 @@ export const createIngress = async (ingressType: IngressInput) => {
     // }
 
     async function createIngressWithRetry(
-        retries = 3,
-        delayMs = 1000
+        retries: number,
+        delayMs: number
     ) {
         let lastError;
 
@@ -111,7 +111,7 @@ export const createIngress = async (ingressType: IngressInput) => {
 
 
     const ingress = await createIngressWithRetry(
-        5,      // retries
+        10,      // retries
         1000    // delay in ms
     );
 
