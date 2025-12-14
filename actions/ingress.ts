@@ -74,11 +74,46 @@ export const createIngress = async (ingressType: IngressInput) => {
         });
     }
 
-    const ingress = await ingressClient.createIngress(ingressType, options);
+    // const ingress = await ingressClient.createIngress(ingressType, options);
 
-    if (!ingress || !ingress.url || !ingress.streamKey) {
-        throw new Error("Failed to create ingress!");
+    // if (!ingress || !ingress.url || !ingress.streamKey) {
+    //     throw new Error("Failed to create ingress!");
+    // }
+
+    async function createIngressWithRetry(
+        retries = 3,
+        delayMs = 1000
+    ) {
+        let lastError;
+
+        for (let attempt = 1; attempt <= retries; attempt++) {
+            try {
+                const ingress = await ingressClient.createIngress(ingressType, options);
+
+                // if (!ingress || !ingress.url || !ingress.streamKey) {
+                //     throw new Error("Ingress created but missing url or streamKey");
+                // }
+
+                return ingress;
+            } catch (err) {
+                lastError = err;
+
+                if (attempt < retries) {
+                    await new Promise(resolve => setTimeout(resolve, delayMs));
+                }
+            }
+        }
+
+        throw new Error(
+            `Failed to create ingress after ${retries} attempts. Last error: ${lastError}`
+        );
     }
+
+
+    const ingress = await createIngressWithRetry(
+        5,      // retries
+        1000    // delay in ms
+    );
 
     await client.stream.update({
         where: { userId: self.user?.id },

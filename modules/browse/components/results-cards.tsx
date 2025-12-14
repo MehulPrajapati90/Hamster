@@ -3,6 +3,7 @@ import Link from "next/link";
 import Thumbnail, { ThumbnailSkeleton } from "./thumbnail";
 import UserAvatar, { UserAvatarSkeleton } from "@/components/ui/user-avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { currentUser } from "@clerk/nextjs/server";
 
 interface ResultsCardsProps {
     data: {
@@ -13,9 +14,11 @@ interface ResultsCardsProps {
     }
 }
 
-const ResultsCards = ({ data }: ResultsCardsProps) => {
+const ResultsCards = async ({ data }: ResultsCardsProps) => {
+    const currentuser = await currentUser();
+
     return (
-        <Link href={`/${data.user.username}`}>
+        <Link href={currentuser?.username === data?.user?.username ? `/u/${data?.user?.username}` : `/${data.user.username}`}>
             <div className="h-full w-full space-y-4">
                 <Thumbnail
                     src={data?.thumbnailUrl!}
