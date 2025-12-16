@@ -14,6 +14,7 @@ import {
 
 import { client } from "@/lib/db";
 import { currentDbUser } from "@/modules/auth/actions";
+import { revalidatePath } from "next/cache";
 
 const roomService = new RoomServiceClient(
     process.env.LIVEKIT_URL!,
@@ -24,7 +25,7 @@ const roomService = new RoomServiceClient(
 const ingressClient = new IngressClient(
     process.env.LIVEKIT_URL!,
     process.env.LIVEKIT_API_KEY!,
-    process.env.LIVEKIT_API_SECRET!
+    process.env.LIVEKIT_API_SECRET!,
 );
 
 export const resetIngress = async (hostIdentity: string) => {
@@ -44,35 +45,14 @@ export const resetIngress = async (hostIdentity: string) => {
 
 export const createIngress = async (ingressType: IngressInput) => {
     const self = await currentDbUser();
-    if (!self.success || !self.user?.id) {
-        throw new Error("Unauthorized");
-    }
 
-    const hostId = self.user.id;
+    await resetIngress(self.user?.id!);
 
-    /* ---------------------------------------------
-       1️⃣ RETURN EXISTING INGRESS (IDEMPOTENT)
-    ---------------------------------------------- */
-    const existing = await client.stream.findUnique({
-        where: { userId: hostId },
-    });
-
-    if (existing?.ingressId && existing?.serverUrl && existing?.streamKey) {
-        return {
-            ingressId: existing.ingressId,
-            url: existing.serverUrl,
-            streamKey: existing.streamKey,
-        };
-    }
-
-    /* ---------------------------------------------
-       2️⃣ BUILD OPTIONS
-    ---------------------------------------------- */
     const options: CreateIngressOptions = {
-        name: self.user.username,
-        roomName: hostId,
-        participantName: self.user.username,
-        participantIdentity: hostId,
+        name: self.user?.username,
+        roomName: self.user?.id,
+        participantName: self.user?.username,
+        participantIdentity: self.user?.id!,
     };
 
     if (ingressType === IngressInput.WHIP_INPUT) {
@@ -94,26 +74,22 @@ export const createIngress = async (ingressType: IngressInput) => {
         });
     }
 
-    /* ---------------------------------------------
-       3️⃣ CREATE INGRESS (ONCE)
-    ---------------------------------------------- */
     const ingress = await ingressClient.createIngress(ingressType, options);
 
-    if (!ingress?.ingressId || !ingress?.url || !ingress?.streamKey) {
-        throw new Error("Ingress creation failed");
+    if (!ingress || !ingress.url || !ingress.streamKey) {
+        throw new Error("Failed to create ingress!");
     }
 
-    /* ---------------------------------------------
-       4️⃣ SAVE IMMEDIATELY (ATOMIC SOURCE OF TRUTH)
-    ---------------------------------------------- */
     await client.stream.update({
-        where: { userId: hostId },
+        where: { userId: self.user?.id },
         data: {
             ingressId: ingress.ingressId,
             serverUrl: ingress.url,
             streamKey: ingress.streamKey,
         },
     });
+
+    // revalidatePath(`/u/${self.user?.username}/keys`);
 
     return {
         ingressId: ingress.ingressId,
