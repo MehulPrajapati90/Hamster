@@ -93,7 +93,7 @@ export const createIngress = async (ingressType: IngressInput) => {
                 // if (!ingress || !ingress.url || !ingress.streamKey) {
                 //     throw new Error("Ingress created but missing url or streamKey");
                 // }
-
+                console.log(ingress);
                 return ingress;
             } catch (err) {
                 lastError = err;
@@ -103,7 +103,7 @@ export const createIngress = async (ingressType: IngressInput) => {
                 }
             }
         }
-
+        console.log( `Failed to create ingress after ${retries} attempts. Last error: ${lastError}`);
         throw new Error(
             `Failed to create ingress after ${retries} attempts. Last error: ${lastError}`
         );
