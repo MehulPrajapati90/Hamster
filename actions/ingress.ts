@@ -29,14 +29,22 @@ const ingressClient = new IngressClient(
 );
 
 export const resetIngress = async (hostIdentity: string) => {
-    const ingresses = await ingressClient.listIngress({ roomName: hostIdentity });
+    // Clean up any room belonging to this host
     const rooms = await roomService.listRooms([hostIdentity]);
-
     for (const room of rooms) {
         await roomService.deleteRoom(room.name);
     }
 
-    for (const ingress of ingresses) {
+    // Clean up any ingress associated with this host.
+    // Using an unfiltered list + host-based filters ensures we delete stale entries
+    // even if they were created with different options or without roomName set.
+    const ingresses = await ingressClient.listIngress();
+    const hostIngresses = ingresses.filter((ingress) =>
+        ingress.roomName === hostIdentity ||
+        ingress.participantIdentity === hostIdentity
+    );
+
+    for (const ingress of hostIngresses) {
         if (ingress.ingressId) {
             await ingressClient.deleteIngress(ingress.ingressId);
         }
@@ -45,14 +53,19 @@ export const resetIngress = async (hostIdentity: string) => {
 
 export const createIngress = async (ingressType: IngressInput) => {
     const self = await currentDbUser();
+    if (!self.success || !self.user?.id) {
+        throw new Error("Unauthorized");
+    }
 
-    await resetIngress(self.user?.id!);
+    const hostId = self.user.id;
+
+    await resetIngress(hostId);
 
     const options: CreateIngressOptions = {
         name: self.user?.username,
-        roomName: self.user?.id,
+        roomName: hostId,
         participantName: self.user?.username,
-        participantIdentity: self.user?.id!,
+        participantIdentity: hostId,
     };
 
     if (ingressType === IngressInput.WHIP_INPUT) {
@@ -98,12 +111,19 @@ export const createIngress = async (ingressType: IngressInput) => {
             } catch (err) {
                 lastError = err;
 
+                const message =
+                    err instanceof Error ? err.message : typeof err === "string" ? err : "";
+                if (message?.toLowerCase().includes("ingress object limit exceeded")) {
+                    // Try another cleanup pass for this host before the next retry
+                    await resetIngress(hostId);
+                }
+
                 if (attempt < retries) {
                     await new Promise(resolve => setTimeout(resolve, delayMs));
                 }
             }
         }
-        console.log( `Failed to create ingress after ${retries} attempts. Last error: ${lastError}`);
+        console.log(`Failed to create ingress after ${retries} attempts. Last error: ${lastError}`);
         throw new Error(
             `Failed to create ingress after ${retries} attempts. Last error: ${lastError}`
         );
