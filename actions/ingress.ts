@@ -45,19 +45,7 @@ export const resetIngress = async (hostIdentity: string) => {
 export const createIngress = async (ingressType: IngressInput) => {
     const self = await currentDbUser();
 
-    console.log(self.user?.id)
-
-    // await resetIngress(self.user?.id!);
-
-    const ingresses = await ingressClient.listIngress({ roomName: self.user?.id });
-
-    console.log(ingresses);
-
-    for (const ingress of ingresses) {
-        if (ingress.ingressId) {
-            await ingressClient.deleteIngress(ingress.ingressId);
-        }
-    }
+    await resetIngress(self.user?.id!);
 
     const options: CreateIngressOptions = {
         name: self.user?.username,
@@ -86,8 +74,6 @@ export const createIngress = async (ingressType: IngressInput) => {
     }
 
     const ingress = await ingressClient.createIngress(ingressType, options);
-
-    console.log(ingress)
 
     if (!ingress || !ingress.url || !ingress.streamKey) {
         throw new Error("Failed to create ingress!");

@@ -4,7 +4,6 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const BrowseResults = async () => {
     const data = await getStreams();
-    console.log(data);
     return (
         <div className='text-white'>
             <h2 className='text-lg font-semibold mb-4'>
