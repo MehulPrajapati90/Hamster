@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const NotFoundPage = () => {
     return (
-        <div className='h-full flex flex-col space-y-4 items-center justify-center text-muted-foreground'>
+        <div className='min-h-screen w-full flex flex-col space-y-4 items-center justify-center text-muted-foreground'>
             <h1 className='text-4xl'>404</h1>
             <p>
                 We Could&apos;t find the page you were looking for.
@@ -15,4 +15,4 @@ const NotFoundPage = () => {
     )
 }
 
-export default NotFoundPage
+export default NotFoundPage;
