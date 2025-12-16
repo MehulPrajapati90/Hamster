@@ -14,7 +14,6 @@ import {
 
 import { client } from "@/lib/db";
 import { currentDbUser } from "@/modules/auth/actions";
-import { revalidatePath } from "next/cache";
 
 const roomService = new RoomServiceClient(
     process.env.LIVEKIT_URL!,
@@ -46,7 +45,15 @@ export const resetIngress = async (hostIdentity: string) => {
 export const createIngress = async (ingressType: IngressInput) => {
     const self = await currentDbUser();
 
-    await resetIngress(self.user?.id!);
+    // await resetIngress(self.user?.id!);
+
+    const ingresses = await ingressClient.listIngress();
+
+    for (const ingress of ingresses) {
+        if (ingress.ingressId) {
+            await ingressClient.deleteIngress(ingress.ingressId);
+        }
+    }
 
     const options: CreateIngressOptions = {
         name: self.user?.username,
@@ -88,8 +95,6 @@ export const createIngress = async (ingressType: IngressInput) => {
             streamKey: ingress.streamKey,
         },
     });
-
-    // revalidatePath(`/u/${self.user?.username}/keys`);
 
     return {
         ingressId: ingress.ingressId,
