@@ -29,11 +29,11 @@ const ingressClient = new IngressClient(
 
 export const resetIngress = async (hostIdentity: string) => {
     const ingresses = await ingressClient.listIngress({ roomName: hostIdentity });
-    // const rooms = await roomService.listRooms([hostIdentity]);
+    const rooms = await roomService.listRooms([hostIdentity]);
 
-    // for (const room of rooms) {
-    //     await roomService.deleteRoom(room.name);
-    // }
+    for (const room of rooms) {
+        await roomService.deleteRoom(room.name);
+    }
 
     for (const ingress of ingresses) {
         if (ingress.ingressId) {
@@ -45,7 +45,28 @@ export const resetIngress = async (hostIdentity: string) => {
 export const createIngress = async (ingressType: IngressInput) => {
     const self = await currentDbUser();
 
-    await resetIngress(self.user?.id!);
+    // await resetIngress(self.user?.id!);
+
+    // const ingresses = await ingressClient.listIngress({ roomName: self?.user?.id });
+
+    // for (const ingress of ingresses) {
+    //     if (ingress.ingressId) {
+    //         await ingressClient.deleteIngress(ingress.ingressId);
+    //     }
+    // }
+
+
+    while (true) {
+        const ingresses = await ingressClient.listIngress({ roomName: self?.user?.id });
+
+        if (ingresses.length === 0) break;
+
+        for (const ingress of ingresses) {
+            if (ingress.ingressId) {
+                await ingressClient.deleteIngress(ingress.ingressId);
+            }
+        }
+    }
 
     const options: CreateIngressOptions = {
         name: self.user?.username,
